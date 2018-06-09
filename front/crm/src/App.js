@@ -17,16 +17,12 @@ firstname: "test",
 		fetch("http://192.168.1.83:8000/clients/5b1ac994450b5227d9bf00ba")
 			.then(response => response.json())
 			.then(data => {
-						this.setState({
-							firstname	: data.firstname,
-							lastname	: data.lastname,
-							id				:	data._id
-
-						})
-						console.log(this.state.firstname);
-						console.log(this.state.lastname);
-						console.log(this.state.id);
-					});
+				this.setState({
+					firstname	: data.firstname,
+					lastname	: data.lastname,
+					id				:	data._id
+			})
+		});
 	};
 	render() {
 		return (
