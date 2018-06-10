@@ -1,7 +1,7 @@
 var ObjectID = require('mongodb').ObjectID;
 
 module.exports = function(app, dbo) {
-	// Get
+	// Get client by id
 	app.get('/clients/:id',(req, res) => {
 		console.log(req.params.id);
 		const id = req.params.id;
@@ -14,7 +14,14 @@ module.exports = function(app, dbo) {
 			}
 		});
 	});
-	// Get
+	// Get client by id
+	// Get all clients return id
+	app.get('/all' , (req, res) => {
+		dbo.collection('clients').distinct('_id', {}, {}, function (err, result) {
+				res.send(JSON.stringify(result)); 
+				})
+	});
+	// Get all clients return id
 	// Delete
 	app.delete('/clients/:id', (req,res) => {
 		const id = req.params.id;
@@ -31,8 +38,14 @@ module.exports = function(app, dbo) {
 	// Insert
 	app.post('/clients', (req,res) => {
 			// You'll create your client here
-			const client = { firstname: req.body.firstname, 
-				lastname: req.body.lastname }; 
+			const client = { 
+				firstname	: req.body.firstname, 
+				lastname	: req.body.lastname,
+				agent			: req.body.agent,
+				phone			: req.body.phone,
+				email			: req.body.email,
+				company		: req.body.company	
+			 	}; 
 			dbo.collection('clients').insert(client, (err, result) => {
 				if (err) {
 					res.send({ 'error': 'An error has occurred' });
