@@ -22,6 +22,40 @@ module.exports = function(app, dbo) {
 				})
 	});
 	// Get all clients return id
+	// Add Note
+	// call with id: 'client id
+	//           note: 'Note info'
+	app.post('/addNote', (req,res) => {
+		// Create Object ID
+		var o_id = new ObjectID(req.body.id);
+		dbo.collection('clients').findOne({_id: o_id}, function(err, document) {
+			  console.log(document.num_notes);
+				note_num = document.num_notes+1;
+				dbo.collection('clients').updateOne({_id: o_id}, {$set:{num_notes:note_num}} );
+				note_name = "note"+ note_num.toString();
+				dbo.collection('clients').updateOne({_id: o_id}, {$set: {[note_name]: req.body.note}} );
+			});
+		res.send("note Added");
+	});
+	// Add Note
+
+	// Get All Notes
+	// Returns JSON object full of notes
+	// key: note + num
+	app.post('/getNotes', (req,res) => {
+		// Create Object ID
+		var o_id = new ObjectID(req.body.id);
+		dbo.collection('clients').findOne({_id: o_id}, function(err, document) {
+				var notes = {};
+				var note_name = "note1";
+				for (i=1;i<= document.num_notes; i++){
+					note_name = "note" + i.toString();
+					notes[[note_name]] = document[note_name];
+				}
+				res.send(notes);
+			});
+	});
+	// Get All Notes
 	// Delete
 	app.delete('/clients/:id', (req,res) => {
 		const id = req.params.id;
@@ -44,7 +78,8 @@ module.exports = function(app, dbo) {
 				agent			: req.body.agent,
 				phone			: req.body.phone,
 				email			: req.body.email,
-				company		: req.body.company	
+				company		: req.body.company,
+				num_notes : 0
 			 	}; 
 			dbo.collection('clients').insert(client, (err, result) => {
 				if (err) {
